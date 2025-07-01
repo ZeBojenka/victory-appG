@@ -17,12 +17,18 @@ jobs:
       with:
         python-version: '3.10'
 
+    - name: Install Java 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
     - name: Install system dependencies
       run: |
         sudo apt update
         sudo apt install -y \
           python3-pip build-essential \
-          git zip unzip openjdk-17-jdk \
+          git zip unzip \
           libffi-dev libssl-dev \
           libzbar-dev libsqlite3-dev \
           wget
@@ -46,8 +52,9 @@ jobs:
 
     - name: Set environment variables
       run: |
-        echo "export PATH=$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
-        echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
 
     - name: Build APK
       run: |
@@ -58,4 +65,3 @@ jobs:
       with:
         name: victory-app-debug
         path: bin/*.apk
-
