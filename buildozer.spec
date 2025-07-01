@@ -64,6 +64,4 @@ android.meta_data = com.google.android.gms.version=12451000
 
 [buildozer.commands]
 
-[app]
 
-# Эти строки должны быть внизу, но повторение [app] — баг в buildozer
