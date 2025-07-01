@@ -24,12 +24,30 @@ jobs:
           python3-pip build-essential \
           git zip unzip openjdk-17-jdk \
           libffi-dev libssl-dev \
-          libzbar-dev libsqlite3-dev
+          libzbar-dev libsqlite3-dev \
+          wget
 
     - name: Install pip packages
       run: |
         pip install --upgrade pip
         pip install cython buildozer
+
+    - name: Install Android SDK and build-tools
+      run: |
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        cd $HOME/android-sdk/cmdline-tools
+        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O tools.zip
+        unzip tools.zip
+        mv cmdline-tools latest
+        mkdir -p $HOME/.android
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk --licenses
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
+          "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
+    - name: Set environment variables
+      run: |
+        echo "export PATH=$HOME/android-sdk/platform-tools:$PATH" >> $GITHUB_ENV
+        echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
 
     - name: Build APK
       run: |
@@ -40,3 +58,4 @@ jobs:
       with:
         name: victory-app-debug
         path: bin/*.apk
+
